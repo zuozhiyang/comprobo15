@@ -3,7 +3,7 @@
   <arg name="host"/>
   <arg name="receive_port" default="5000"/>
 
-  <include file="$(find neato_node)/launch/bringup_minimal_symmetric.launch">
+  <include file="$(find neato_node)/launch/bringup_minimal.launch">
 	<arg name="host" value="$(arg host)"/>
   </include>
   <include file="$(find gscam)/examples/raspi_nodelet_udp.launch">
