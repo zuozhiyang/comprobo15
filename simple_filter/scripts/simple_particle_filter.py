@@ -19,11 +19,13 @@ class SimpleParticleFilter(object):
         rospy.init_node('simple_particle_filter')
         self.walls = rospy.get_param('~walls')
         self.n_particles = rospy.get_param('~nparticles')
+        real_robot = rospy.get_param('~realrobot', False)
 
         self.world_model = WorldModel(self.walls)
         sensor_model = SensorModel(model_noise_rate=0.05,
                                    odom_noise_rate=0.1,
-                                   world_model=self.world_model)
+                                   world_model=self.world_model,
+                                   real_robot=real_robot)
 
         self.fig = plt.figure()
         self.fig.show()
@@ -147,11 +149,11 @@ class ParticleFilter(object):
             p.weight = 1./len(self.particles)
 
 class SensorModel(object):
-    def __init__(self, model_noise_rate, odom_noise_rate, world_model):
+    def __init__(self, model_noise_rate, odom_noise_rate, world_model, real_robot):
         self.model_noise_rate = model_noise_rate
         self.odom_noise_rate = odom_noise_rate
         self.world_model = world_model
-        self.real_robot = False
+        self.real_robot = real_robot
 
     def get_likelihood(self, observation, position, direction):
         """ Returns the probability of a given distance reading
