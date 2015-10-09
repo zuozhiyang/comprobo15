@@ -33,6 +33,7 @@ class BallTracker(object):
         self.cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding="bgr8")
         print self.cv_image.shape
         cv2.imshow('video_window', self.cv_image)
+        cv2.waitKey(5)
 
     def run(self):
         """ The main run loop, in this node it doesn't do anything """
