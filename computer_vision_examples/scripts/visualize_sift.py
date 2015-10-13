@@ -6,6 +6,7 @@
 import numpy as np
 import cv2
 from math import pi, cos, sin
+import rospy
 
 drawing = False
 V = None
@@ -14,7 +15,7 @@ patch_size = (128,128)
 # we will draw our patch on im
 im =  255*np.ones(patch_size,dtype=np.uint8)
 
-def visualize_descriptor(object):
+def visualize_descriptor():
 	""" Visualize the current value of the SIFT descriptor """
 	global V
 	dc, des = extractor.compute(im, [keypoint])

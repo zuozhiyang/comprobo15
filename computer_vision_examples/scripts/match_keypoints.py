@@ -16,7 +16,6 @@ class KeyPointMatcherDemo(object):
 		self.im1_file = rospack.get_path('computer_vision_examples') + '/images/' + im1_file
 		self.im2_file = rospack.get_path('computer_vision_examples') + '/images/' + im2_file
 
-		print self.im1_file
 		self.detector = cv2.FeatureDetector_create(descriptor_name)
 		self.extractor = cv2.DescriptorExtractor_create(descriptor_name)
 		self.matcher = cv2.BFMatcher()
