@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+
+""" A simple script to visualize the SIFT descriptor for an interactively drawn sketch """
+
 import numpy as np
 import cv2
 from math import pi, cos, sin
@@ -11,7 +14,7 @@ patch_size = (128,128)
 # we will draw our patch on im
 im =  255*np.ones(patch_size,dtype=np.uint8)
 
-def visualize_descriptor():
+def visualize_descriptor(object):
 	""" Visualize the current value of the SIFT descriptor """
 	global V
 	dc, des = extractor.compute(im, [keypoint])
@@ -46,6 +49,7 @@ def visualize_descriptor():
 				cv2.line(V,(int(end_point[0]), int(end_point[1])),(int(arrow_e2[0]),int(arrow_e2[1])),2)
 
 def mouse_event(event,x,y,flag,dc):
+	""" handle mouse events, basically lets you sketch by clicking in the left pane """
 	global drawing
 	global last_x
 	global last_y
@@ -79,9 +83,10 @@ if __name__ == '__main__':
 	print "Draw on the canvas by clicking and holding the mouse (move slowly)"
 	print "Reset the sketch by pressing the spacebar"
 
-	while True:
+	while not rospy.is_shutdown():
 		cv2.imshow("mywin", np.hstack((cv2.resize(im,visualizer_size),V)))
 		key = cv2.waitKey(25)
 		if key != -1 and chr(key) == ' ':
+			# if you hit space bar, you should resest the sketch on the left
 			im =  255*np.ones(patch_size,dtype=np.uint8)
 			visualize_descriptor()

@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
+""" A demo that shows how keypoint matches work using SIFT """
+
 import cv2
 import pickle
 import numpy as np
 import rospkg
 
 
-class KeyPointMatcherDemo:
+class KeyPointMatcherDemo(object):
 	""" KeyPointMatcherDemo shows the basics of interest point detection,
 	    descriptor extraction, and descriptor matching in OpenCV """
 	def __init__(self, im1_file, im2_file, descriptor_name):
