@@ -42,6 +42,7 @@ def plot_pdf(mu, sigma_sq, x_true, z, graphs=None):
         graphs[1].set_markersize(20)
         graphs[2].set_markersize(20)
         plt.ylim([0, 5])
+        plt.legend(('probability density','true position','measured position'))
     plt.show(False)
     return graphs
 
