@@ -94,9 +94,11 @@ class SimpleKalmanFilter(object):
         """ Plot the Gaussian PDF with the specified mean (mu) and variance (sigma_sq)
             x_true is the true system state which will be plotted in blue
             z is the current observation which will be plotted in red """
-        xs = arange(-5, 5, .005)
+        xs = arange(min(-5,z-2,self.world.x_true-2), max(5,z+2,self.world.x_true+2), .005)
         p_of_x = [1./sqrt(2*pi*self.sigma_sq)*e**(-(x - self.mu)**2/(2*self.sigma_sq)) for x in xs]
+        plt.xlim([min(xs), max(xs)])
         if self.graphs:
+            self.graphs[0].set_xdata(xs)
             self.graphs[0].set_ydata(p_of_x)
             self.graphs[1].set_xdata(self.world.x_true)
             self.graphs[2].set_xdata(z)
