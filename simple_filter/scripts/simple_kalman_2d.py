@@ -81,7 +81,6 @@ class SimpleKalmanFilter(object):
 
     def run(self):
         while not rospy.is_shutdown():
-            print self.world.sigma_m_sq
             # Graph new observation from the system
             z_t = self.world.get_z_t()
             self.plot_pdf(z_t)
@@ -93,7 +92,8 @@ class SimpleKalmanFilter(object):
             measurement_residual = z_t - self.world.H.dot(self.mu)
             residual_covariance = self.world.H.dot(self.sigma_sq).dot(self.world.H.T) + self.world.sigma_z_sq
             K_t = self.sigma_sq.dot(self.world.H.T).dot(np.linalg.inv(residual_covariance))
-            self.mu += K_t.dot(measurement_residual)
+            self.mu = self.mu + K_t.dot(measurement_residual)
+
             self.sigma_sq = (np.eye(len(self.mu))-K_t.dot(self.world.H)).dot(self.sigma_sq)
             plt.pause(self.pause_time)
             self.plot_pdf(z_t)
