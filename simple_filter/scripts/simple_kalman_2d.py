@@ -32,7 +32,7 @@ class SimpleWorld(object):
         self.x_true = multivariate_normal(mu_0, sigma_0)
         self.sigma_m_sq = [[0, 0], [0, sigma_m_sq]]
         self.sigma_z_sq = [[sigma_z_sq]]
-        self.A = np.asarray([[1, 1],[0, 1]])
+        self.A = np.asarray([[1, .1],[0, 1]])
         self.H = np.asarray([[0, 1]])
 
     def get_z_t(self):
@@ -55,8 +55,8 @@ class SimpleKalmanFilter(object):
         plt.ion()
 
         # initial beliefs
-        self.mu = np.asarray([0, 0])
-        self.sigma_sq = np.asarray([[1, 0],[0, 1]])
+        self.mu = np.asarray([0, 3])
+        self.sigma_sq = np.asarray([[1, 0],[0, 4]])
 
         # motor noise
         sigma_m_sq = rospy.get_param('~sigma_m_sq', 0.01)
