@@ -109,7 +109,7 @@ class MarkerProcessor(object):
         self.add_marker_locator(MarkerLocator(2,(0.0,10*12*2.54/100.0),0))
         self.add_marker_locator(MarkerLocator(3,(-6*12*2.54/100.0,6*12*2.54/100.0),0))
 
-        self.pose_correction = rospy.get_param('~pose_correction')
+        self.pose_correction = rospy.get_param('~pose_correction',0.0)
 
         self.marker_sub = rospy.Subscriber("ar_pose_marker",
                                            ARMarkers,
