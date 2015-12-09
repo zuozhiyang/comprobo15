@@ -72,7 +72,7 @@ def angle_diff(a, b):
 class CalibrateStarPose(object):
     def __init__(self):
         rospy.init_node('calibrate_star_pose')
-        rospy.Subscriber('/STAR_pose', PoseStamped, self.process_pose)
+        rospy.Subscriber('STAR_pose', PoseStamped, self.process_pose)
         self.pts = []
 
     def process_pose(self, msg):

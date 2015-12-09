@@ -83,9 +83,7 @@ class MarkerLocator(object):
 
     def get_camera_position(self, marker):
         """ Outputs the position of the camera in the global coordinates """
-        print marker
         translation, rotation = TransformHelpers.convert_pose_inverse_transform(marker.pose.pose)
-        print "my translation step 1", translation
         euler_angles = euler_from_quaternion(rotation)
         # correct for coordinate system convention changes between camera and world
         # Also, the Neato can't fly!
@@ -93,7 +91,6 @@ class MarkerLocator(object):
         # correct for the possibility that the marker is rotated relative to the world coordinate frame
         rot_mat = rotation_matrix(self.yaw, [0,0,1])
         translation_rotated = rot_mat.dot(translation)
-        print "my translation step 2", translation_rotated
 
         xy_yaw = (translation_rotated[0]+self.position[0],
                   translation_rotated[1]+self.position[1],
@@ -116,6 +113,7 @@ class MarkerProcessor(object):
 
         self.pose_correction = rospy.get_param('~pose_correction',0.0)
         self.phase_offset = rospy.get_param('~phase_offset',0.0)
+        self.is_flipped = rospy.get_param('~is_flipped',False)
 
 
         self.marker_sub = rospy.Subscriber("ar_pose_marker",
@@ -157,10 +155,14 @@ class MarkerProcessor(object):
                 print "FOUND IT!"
                 locator = self.marker_locators[marker.id]
                 xy_yaw = list(locator.get_camera_position(marker))
+                if self.is_flipped:
+                    print "WE ARE FLIPPED!!!"
+                    xy_yaw[2] += pi
                 print self.pose_correction
                 print self.phase_offset
                 xy_yaw[0] += self.pose_correction*cos(xy_yaw[2]+self.phase_offset)
                 xy_yaw[1] += self.pose_correction*sin(xy_yaw[2]+self.phase_offset)
+
                 orientation_tuple = quaternion_from_euler(0,0,xy_yaw[2])
                 pose = Pose(position=Point(x=-xy_yaw[0],y=-xy_yaw[1],z=0),
                             orientation=Quaternion(x=orientation_tuple[0], y=orientation_tuple[1], z=orientation_tuple[2], w=orientation_tuple[3]))
@@ -197,5 +199,5 @@ class MarkerProcessor(object):
             r.sleep()
 
 if __name__ == '__main__':
-    nh = MarkerProcessor(use_dummy_transform=True)
+    nh = MarkerProcessor(use_dummy_transform=False)
     nh.run()
