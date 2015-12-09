@@ -97,9 +97,10 @@ class CalibrateStarPose(object):
             xs = [pt[0] for pt in self.pts]
             ys = [pt[1] for pt in self.pts]
             yaws = [pt[2] for pt in self.pts]
-            min_dim = min(len(xs), len(ys))
+            min_dim = min(len(xs), len(ys), len(yaws))
             xs = xs[:min_dim]
             ys = ys[:min_dim]
+            yaws = yaws[:min_dim]
             if len(xs) > 5:
                 xc,yc,R,residu = leastsq_circle(np.asarray(xs),np.asarray(ys))
                 phase_offset = self.get_phase_offset(xc,yc,R,xs,ys,yaws)
