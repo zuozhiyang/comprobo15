@@ -7,6 +7,7 @@ from scipy import optimize
 from matplotlib import pyplot as plt, cm, colors
 from math import pi, atan2
 import math
+import dynamic_reconfigure.client
 from tf.transformations import euler_from_quaternion
 
 def calc_R(x,y, xc, yc):
@@ -90,7 +91,12 @@ class CalibrateStarPose(object):
             phases[i] = angle_diff(angle_to_center, yaws[i]+pi)
         return np.median(phases)
 
+    def config_callback(self, config):
+        pass
+
     def run(self):
+        client = dynamic_reconfigure.client.Client("star_center_positioning_node", timeout=30, config_callback=self.config_callback)
+        client.update_configuration({"pose_correction":0.0, "phase_offset":0.0})
         r = rospy.Rate(5)
         plt.figure()
         while not rospy.is_shutdown():
@@ -104,12 +110,13 @@ class CalibrateStarPose(object):
             if len(xs) > 5:
                 xc,yc,R,residu = leastsq_circle(np.asarray(xs),np.asarray(ys))
                 phase_offset = self.get_phase_offset(xc,yc,R,xs,ys,yaws)
+
                 print "rosrun my_pf star_center_position_revised.py _pose_correction:="+str(R) + " _phase_offset:="+str(phase_offset)
                 plot_data_circle(xs,ys,xc,yc,R)
 
             plt.pause(.05)
             r.sleep()
-
+        client.update_configuration({"pose_correction":R, "phase_offset":phase_offset})
 
 
 if __name__ == '__main__':

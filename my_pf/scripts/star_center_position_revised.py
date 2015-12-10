@@ -15,6 +15,8 @@ from std_msgs.msg import Header
 from tf import TransformListener, TransformBroadcaster
 from copy import deepcopy
 from math import sin, cos, pi, atan2, fabs
+from dynamic_reconfigure.server import Server
+from my_pf.cfg import STARPoseConfig
 
 class TransformHelpers:
     """ Some convenience functions for translating between various representions of a robot pose.
@@ -116,10 +118,12 @@ class MarkerProcessor(object):
         self.is_flipped = rospy.get_param('~is_flipped',False)
 
 
+        srv = Server(STARPoseConfig, self.config_callback)
+
         self.marker_sub = rospy.Subscriber("ar_pose_marker",
                                            ARMarkers,
                                            self.process_markers)
-        self.odom_sub = rospy.Subscriber("odom", Odometry, self.process_odom, queue_size=10)
+        self.odom_sub = rospy.Subscriber("/odom", Odometry, self.process_odom, queue_size=10)
         self.star_pose_pub = rospy.Publisher("STAR_pose",PoseStamped,queue_size=10)
         self.continuous_pose = rospy.Publisher("STAR_pose_continuous",PoseStamped,queue_size=10)
         self.tf_listener = TransformListener()
@@ -127,6 +131,11 @@ class MarkerProcessor(object):
 
     def add_marker_locator(self, marker_locator):
         self.marker_locators[marker_locator.id] = marker_locator
+
+    def config_callback(self, config, level):
+        self.phase_offset = config.phase_offset
+        self.pose_correction = config.pose_correction
+        return config
 
     def process_odom(self, msg):
         p = PoseStamped(header=Header(stamp=rospy.Time(0), frame_id=self.odom_frame_name),
